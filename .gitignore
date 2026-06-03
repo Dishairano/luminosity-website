@@ -1,0 +1,10 @@
+# Composer (autoloader wordt opnieuw gegenereerd met: composer dump-autoload)
+/vendor/
+
+# ISO-downloads (groot, staan op de server, niet in Git)
+/public/downloads/
+
+# Omgeving / lokaal
+.env
+*.log
+.DS_Store

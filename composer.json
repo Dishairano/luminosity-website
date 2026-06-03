@@ -1,0 +1,13 @@
+{
+    "name": "luminosity/web",
+    "description": "Luminosity OS — website (landing + interactieve engine-demo) in PHP MVC/OOP",
+    "type": "project",
+    "require": {
+        "php": ">=8.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    }
+}
