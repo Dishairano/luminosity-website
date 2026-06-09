@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Luminosity Setup — mockup</title>
+<style>
+  :root{
+    --bg:#0b0d13; --win:#13161f; --win2:#171b26; --rail:#0f121a;
+    --panel:#1b1f2b; --border:#2a3040; --border2:#39415a;
+    --text:#eef0f6; --muted:#99a0b5; --accent:#ffd166; --accent-ink:#241a06;
+    --accent2:#8ad0ff; --green:#5bd17a; --red:#ff6b6b;
+    --radius:16px; --shadow:0 30px 80px rgba(0,0,0,.55);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;font-family:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;
+    background:
+      radial-gradient(1100px 700px at 75% -10%, #1d2740 0%, transparent 60%),
+      radial-gradient(900px 600px at 10% 110%, #241a32 0%, transparent 55%),
+      var(--bg);
+    color:var(--text);display:flex;align-items:center;justify-content:center;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* Installer-venster */
+  .setup{
+    width:min(1000px,94vw);height:min(660px,92vh);
+    background:linear-gradient(180deg,var(--win) 0%, var(--win2) 100%);
+    border:1px solid var(--border);border-radius:var(--radius);
+    box-shadow:var(--shadow);display:grid;grid-template-columns:266px 1fr;
+    overflow:hidden;backdrop-filter:blur(20px);
+  }
+
+  /* Linker rail met stappen */
+  .rail{background:var(--rail);border-right:1px solid var(--border);padding:26px 22px;display:flex;flex-direction:column}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.15rem;margin-bottom:4px}
+  .brand .sun{font-size:1.4rem}
+  .brand span{color:var(--accent)}
+  .brand small{display:block;color:var(--muted);font-weight:500;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;margin-top:2px}
+  .steps{list-style:none;margin:34px 0 0;padding:0;flex:1}
+  .steps li{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:10px;color:var(--muted);font-size:.92rem;transition:.2s}
+  .steps li .dot{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--border2);display:grid;place-items:center;font-size:.78rem;flex:none}
+  .steps li.active{background:rgba(255,209,102,.10);color:#fff}
+  .steps li.active .dot{border-color:var(--accent);color:var(--accent)}
+  .steps li.done{color:#cfd3e0}
+  .steps li.done .dot{background:var(--green);border-color:var(--green);color:#06210f}
+  .rail-foot{color:var(--muted);font-size:.72rem;border-top:1px solid var(--border);padding-top:14px}
+
+  /* Rechter inhoud */
+  .content{display:flex;flex-direction:column;min-width:0}
+  .pane{flex:1;padding:42px 46px;overflow:auto}
+  .step{display:none;animation:fade .35s ease}
+  .step.show{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  h1{font-size:1.9rem;margin:0 0 8px;letter-spacing:-.01em}
+  .sub{color:var(--muted);margin:0 0 26px;font-size:1.02rem;max-width:46ch}
+
+  /* Footer-navigatie */
+  .nav{display:flex;align-items:center;justify-content:space-between;padding:18px 46px;border-top:1px solid var(--border);background:rgba(0,0,0,.18)}
+  .progress-dots{display:flex;gap:7px}
+  .progress-dots i{width:7px;height:7px;border-radius:50%;background:var(--border2)}
+  .progress-dots i.on{background:var(--accent);width:20px;border-radius:6px;transition:.3s}
+  .nav-btns{display:flex;gap:12px}
+  .btn{padding:11px 24px;border-radius:10px;border:1px solid transparent;font-size:.98rem;font-weight:600;cursor:pointer;font-family:inherit}
+  .btn-primary{background:var(--accent);color:var(--accent-ink)}
+  .btn-primary:hover{filter:brightness(1.07)}
+  .btn-ghost{background:transparent;border-color:var(--border2);color:var(--text)}
+  .btn-ghost:hover{border-color:var(--accent)}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+
+  /* Form-elementen */
+  .field{margin-bottom:18px;max-width:440px}
+  .field label{display:block;font-size:.85rem;color:var(--muted);margin-bottom:7px}
+  .input{width:100%;padding:13px 15px;border-radius:10px;border:1px solid var(--border2);background:var(--panel);color:#fff;font-size:1rem;font-family:inherit}
+  .input:focus{outline:none;border-color:var(--accent)}
+  .row{display:flex;gap:14px}.row>*{flex:1}
+
+  /* Keuze-kaarten (taal/schijf) */
+  .choices{display:flex;flex-direction:column;gap:12px;max-width:520px}
+  .choice{display:flex;align-items:center;gap:16px;padding:16px 18px;border:1.5px solid var(--border);border-radius:12px;background:var(--panel);cursor:pointer;transition:.18s}
+  .choice:hover{border-color:var(--border2)}
+  .choice.sel{border-color:var(--accent);background:rgba(255,209,102,.08)}
+  .choice .ic{width:42px;height:42px;border-radius:10px;background:#0e1422;display:grid;place-items:center;font-size:1.3rem;flex:none}
+  .choice .t{font-weight:600}
+  .choice .d{color:var(--muted);font-size:.85rem}
+  .choice .chk{margin-left:auto;color:var(--accent);font-size:1.2rem;opacity:0}
+  .choice.sel .chk{opacity:1}
+
+  .pill{display:inline-block;padding:4px 11px;border-radius:999px;background:rgba(138,208,255,.12);color:var(--accent2);font-size:.78rem;margin-bottom:18px}
+  .warn{color:var(--red);font-size:.85rem;margin-top:6px}
+  ul.clean{color:#cfd3e0;line-height:1.9;padding-left:20px}
+
+  /* Toggle */
+  .toggle{display:flex;align-items:center;gap:12px;margin:14px 0}
+  .switch{width:44px;height:25px;border-radius:999px;background:var(--border2);position:relative;cursor:pointer;transition:.2s;flex:none}
+  .switch::after{content:"";position:absolute;top:3px;left:3px;width:19px;height:19px;border-radius:50%;background:#fff;transition:.2s}
+  .switch.on{background:var(--accent)}.switch.on::after{left:22px}
+
+  /* Hero (welkom) */
+  .hero-sun{font-size:3.4rem;display:block;margin-bottom:10px}
+
+  /* Install-stap */
+  .installing{display:flex;flex-direction:column;align-items:center;text-align:center;padding-top:18px}
+  .ring{--p:0;width:150px;height:150px;border-radius:50%;
+    background:conic-gradient(var(--accent) calc(var(--p)*1%), #232a3a 0);
+    display:grid;place-items:center;margin:8px 0 22px}
+  .ring::before{content:"";position:absolute;width:118px;height:118px;border-radius:50%;background:var(--win2)}
+  .ring b{position:relative;font-size:1.7rem}
+  .log{width:100%;max-width:460px;background:#0b101b;border:1px solid var(--border);border-radius:10px;padding:14px;text-align:left;font-family:ui-monospace,monospace;font-size:.84rem;color:#bfe6ff;height:140px;overflow:auto}
+  .log div{opacity:.55}.log div:last-child{opacity:1;color:#fff}
+
+  .done-check{width:96px;height:96px;border-radius:50%;background:var(--green);color:#06210f;display:grid;place-items:center;font-size:3rem;margin:6px auto 18px}
+  .center{text-align:center}
+</style>
+</head>
+<body>
+<div class="setup">
+  <!-- Linker rail -->
+  <aside class="rail">
+    <div class="brand">
+      <span class="sun">☀</span>
+      <div>Luminosity<span> OS</span><small>Setup</small></div>
+    </div>
+    <ol class="steps" id="steps">
+      <li data-step="0"><span class="dot">1</span> Welkom</li>
+      <li data-step="1"><span class="dot">2</span> Licentie</li>
+      <li data-step="2"><span class="dot">3</span> Schijf</li>
+      <li data-step="3"><span class="dot">4</span> Account</li>
+      <li data-step="4"><span class="dot">5</span> Regio</li>
+      <li data-step="5"><span class="dot">6</span> Overzicht</li>
+      <li data-step="6"><span class="dot">7</span> Installeren</li>
+      <li data-step="7"><span class="dot">✓</span> Klaar</li>
+    </ol>
+    <div class="rail-foot">Lokaal &amp; offline · geen cloud-account nodig</div>
+  </aside>
+
+  <!-- Inhoud -->
+  <section class="content">
+    <div class="pane">
+
+      <!-- 0 Welkom -->
+      <div class="step show" data-step="0">
+        <span class="hero-sun">☀</span>
+        <h1>Welkom bij Luminosity</h1>
+        <p class="sub">Een Linux-computer die je in <strong>gewone taal</strong> bedient. Laten we 'm installeren — kies eerst je taal.</p>
+        <div class="choices">
+          <div class="choice sel" data-pick="lang"><div class="ic">🇳🇱</div><div><div class="t">Nederlands</div><div class="d">Aanbevolen</div></div><div class="chk">✓</div></div>
+          <div class="choice" data-pick="lang"><div class="ic">🇬🇧</div><div><div class="t">English</div><div class="d">English (US)</div></div><div class="chk">✓</div></div>
+        </div>
+      </div>
+
+      <!-- 1 Licentie -->
+      <div class="step" data-step="1">
+        <span class="pill">100% offline</span>
+        <h1>Voorwaarden &amp; privacy</h1>
+        <p class="sub">Luminosity is vrije software. Belangrijk om te weten:</p>
+        <ul class="clean">
+          <li>De taal-engine werkt <strong>volledig lokaal</strong> — geen internet, geen cloud-AI, geen API-sleutel.</li>
+          <li>Er wordt <strong>niets</strong> over je verstuurd. Je gegevens blijven op je computer.</li>
+          <li>Elke actie wordt eerst uitgelegd en je moet bevestigen vóór er iets gebeurt.</li>
+        </ul>
+        <div class="toggle"><div class="switch" id="accept"></div><label for="accept">Ik ga akkoord met de voorwaarden</label></div>
+      </div>
+
+      <!-- 2 Schijf -->
+      <div class="step" data-step="2">
+        <h1>Waar installeren?</h1>
+        <p class="sub">Kies de schijf voor Luminosity. <strong>Let op:</strong> de gekozen schijf wordt gewist.</p>
+        <div class="choices">
+          <div class="choice sel" data-pick="disk"><div class="ic">💽</div><div><div class="t">/dev/sda — 256 GB SSD</div><div class="d">Samsung · leeg</div></div><div class="chk">✓</div></div>
+          <div class="choice" data-pick="disk"><div class="ic">💽</div><div><div class="t">/dev/nvme0n1 — 1 TB NVMe</div><div class="d">WD · bevat data</div></div><div class="chk">✓</div></div>
+        </div>
+        <p class="warn">⚠ Alle bestaande gegevens op de gekozen schijf gaan verloren.</p>
+      </div>
+
+      <!-- 3 Account -->
+      <div class="step" data-step="3">
+        <h1>Maak je account</h1>
+        <p class="sub">Dit account gebruik je om in te loggen op Luminosity.</p>
+        <div class="field"><label>Je naam</label><input class="input" id="fullname" placeholder="Bijv. Kenji"></div>
+        <div class="row">
+          <div class="field"><label>Gebruikersnaam</label><input class="input" id="username" placeholder="kenji"></div>
+          <div class="field"><label>Computernaam</label><input class="input" id="hostname" value="luminosity-pc"></div>
+        </div>
+        <div class="field"><label>Wachtwoord</label><input class="input" type="password" id="pw" placeholder="••••••••"></div>
+      </div>
+
+      <!-- 4 Regio -->
+      <div class="step" data-step="4">
+        <h1>Regio &amp; toetsenbord</h1>
+        <p class="sub">Voor de tijd, taal van het systeem en je toetsenbordindeling.</p>
+        <div class="row">
+          <div class="field"><label>Tijdzone</label>
+            <select class="input" id="tz"><option>Europe/Amsterdam</option><option>Europe/Brussels</option><option>UTC</option></select></div>
+          <div class="field"><label>Toetsenbord</label>
+            <select class="input" id="kb"><option>Belgisch (AZERTY)</option><option>VS (QWERTY)</option><option>Nederlands</option></select></div>
+        </div>
+        <div class="toggle"><div class="switch on" id="updates"></div><label for="updates">Systeem bijwerken na installatie</label></div>
+      </div>
+
+      <!-- 5 Overzicht -->
+      <div class="step" data-step="5">
+        <h1>Klaar om te installeren</h1>
+        <p class="sub">Controleer je keuzes. Hierna begint de installatie.</p>
+        <ul class="clean" id="summary">
+          <li>Taal: <strong id="s-lang">Nederlands</strong></li>
+          <li>Schijf: <strong id="s-disk">/dev/sda — 256 GB SSD</strong> <span style="color:var(--red)">(wordt gewist)</span></li>
+          <li>Gebruiker: <strong id="s-user">—</strong> op <strong id="s-host">luminosity-pc</strong></li>
+          <li>Regio: <strong id="s-tz">Europe/Amsterdam</strong> · <strong id="s-kb">Belgisch (AZERTY)</strong></li>
+          <li>Bevat: Hyprland · Quickshell-schil · offline taal-engine</li>
+        </ul>
+      </div>
+
+      <!-- 6 Installeren -->
+      <div class="step" data-step="6">
+        <div class="installing">
+          <h1>Luminosity wordt geïnstalleerd…</h1>
+          <p class="sub center">Een momentje. Dit gaat over jou — niet over een account ergens in de cloud.</p>
+          <div class="ring" id="ring"><b id="ringpct">0%</b></div>
+          <div class="log" id="log"></div>
+        </div>
+      </div>
+
+      <!-- 7 Klaar -->
+      <div class="step" data-step="7">
+        <div class="center">
+          <div class="done-check">✓</div>
+          <h1>Klaar! Welkom bij Luminosity.</h1>
+          <p class="sub" style="margin-inline:auto">Je computer is geïnstalleerd. Na het herstarten typ je gewoon wat je wilt doen.</p>
+          <button class="btn btn-primary" onclick="restart()">Nu herstarten</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Navigatie -->
+    <div class="nav">
+      <div class="progress-dots" id="dots"></div>
+      <div class="nav-btns">
+        <button class="btn btn-ghost" id="back">Terug</button>
+        <button class="btn btn-primary" id="next">Volgende</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+  const TOTAL = 8;
+  let step = 0;
+  const stepsEls = [...document.querySelectorAll('.step')];
+  const railEls  = [...document.querySelectorAll('#steps li')];
+  const dots = document.getElementById('dots');
+  const back = document.getElementById('back');
+  const next = document.getElementById('next');
+
+  // keuze-kaarten
+  document.querySelectorAll('.choices').forEach(group=>{
+    group.querySelectorAll('.choice').forEach(c=>{
+      c.addEventListener('click',()=>{
+        group.querySelectorAll('.choice').forEach(x=>x.classList.remove('sel'));
+        c.classList.add('sel'); refreshSummary();
+      });
+    });
+  });
+  // toggles
+  document.querySelectorAll('.switch').forEach(s=>s.addEventListener('click',()=>{s.classList.toggle('on');render();}));
+
+  for(let i=0;i<TOTAL;i++){const d=document.createElement('i');dots.appendChild(d);}
+  const dotEls=[...dots.children];
+
+  function refreshSummary(){
+    const lang=document.querySelector('.step[data-step="0"] .choice.sel .t')?.textContent;
+    const disk=document.querySelector('.step[data-step="2"] .choice.sel .t')?.textContent;
+    document.getElementById('s-lang').textContent=lang||'—';
+    document.getElementById('s-disk').textContent=disk||'—';
+    document.getElementById('s-user').textContent=document.getElementById('username').value||'gebruiker';
+    document.getElementById('s-host').textContent=document.getElementById('hostname').value||'luminosity-pc';
+    document.getElementById('s-tz').textContent=document.getElementById('tz').value;
+    document.getElementById('s-kb').textContent=document.getElementById('kb').value;
+  }
+
+  function canAdvance(){
+    if(step===1) return document.getElementById('accept').classList.contains('on');
+    return true;
+  }
+
+  function render(){
+    stepsEls.forEach(s=>s.classList.toggle('show', +s.dataset.step===step));
+    railEls.forEach(li=>{const n=+li.dataset.step;li.classList.toggle('active',n===step);li.classList.toggle('done',n<step);});
+    dotEls.forEach((d,i)=>d.classList.toggle('on',i===step));
+    back.style.visibility = step===0 ? 'hidden':'visible';
+    next.disabled = !canAdvance();
+    if(step===6){ next.style.display='none'; back.style.display='none'; }
+    else if(step===7){ next.style.display='none'; back.style.display='none'; }
+    else { next.style.display=''; back.style.display=''; next.textContent = step===5 ? 'Installeren' : 'Volgende'; }
+  }
+
+  back.addEventListener('click',()=>{ if(step>0){step--;render();}});
+  next.addEventListener('click',()=>{
+    if(!canAdvance()) return;
+    if(step===5){ step=6; render(); runInstall(); return; }
+    if(step<TOTAL-1){ step++; if(step===5) refreshSummary(); render(); }
+  });
+
+  // Fake installatie met meldingen in gewone taal
+  function runInstall(){
+    const msgs=[
+      'Schijf /dev/sda voorbereiden…',
+      'Basissysteem (Arch Linux) kopiëren…',
+      'Kernel en drivers installeren…',
+      'Hyprland (grafische laag) instellen…',
+      'Quickshell-schil installeren…',
+      'Offline taal-engine plaatsen…',
+      'Je account aanmaken…',
+      'Opstartlader (bootloader) schrijven…',
+      'Laatste instellingen toepassen…'
+    ];
+    const log=document.getElementById('log');
+    const ring=document.getElementById('ring');
+    const pct=document.getElementById('ringpct');
+    let i=0, p=0;
+    const tick=()=>{
+      if(i<msgs.length){
+        const line=document.createElement('div');line.textContent='» '+msgs[i];log.appendChild(line);log.scrollTop=log.scrollHeight;
+        i++;
+      }
+      const target=Math.round((i/msgs.length)*100);
+      const grow=setInterval(()=>{
+        if(p>=target){clearInterval(grow);return;}
+        p++;ring.style.setProperty('--p',p);pct.textContent=p+'%';
+      },18);
+      if(i<msgs.length){ setTimeout(tick, 700); }
+      else { setTimeout(()=>{ step=7; render(); }, 1400); }
+    };
+    tick();
+  }
+
+  function restart(){ document.querySelector('.setup').style.transition='opacity .6s';document.querySelector('.setup').style.opacity='0'; }
+
+  render();
+</script>
+</body>
+</html>
