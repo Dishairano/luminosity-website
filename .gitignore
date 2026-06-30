@@ -8,3 +8,6 @@
 .env
 *.log
 .DS_Store
+
+# Examenstukken: leveren we apart in op Canvas, horen niet in de code-repo
+/examen/
